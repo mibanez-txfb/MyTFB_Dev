@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "MyTFBDev",
+    "slug": "MyTFBDev",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "MyTFBDev"
+}
