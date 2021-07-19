@@ -1,4 +1,11 @@
-import React from "react";
-import App from "./App/index";
+import * as React from 'react';
+import {Home} from './src/components/Home';
+import {AuthProvider} from './src/components/AuthProvider';
 
-export default () => <App />;
+export default function App() {
+  return (
+    <AuthProvider>
+      <Home />
+    </AuthProvider>
+  );
+}
