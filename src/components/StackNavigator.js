@@ -2,28 +2,15 @@ import React, { useContext } from "react";
 import { Text, View } from 'react-native';
 import {Header} from 'react-native-elements';
 import {NavigationContainer} from '@react-navigation/native';
-import { createDrawerNavigator } from '@react-navigation/drawer'
-import HomeScreen from '../screens/HomeScreen';
-import StartUpScreen from '../screens/StartUpScreen';
+import { createStackNavigator } from '@react-navigation/stack'
+import LoggedOutNavigator from './LoggedOutNavigator';
+import LoggedInNavigator from './LoggedInNavigator';
 import {AuthProvider, AuthContext} from '../components/AuthProvider';
 import { inject, observer } from "mobx-react";
-import {navigationRef, navigate, openDrawer} from "../state/RootNavigation";
+import {navigationRef} from "../state/RootNavigation";
 
 // Constants
-const Drawer = createDrawerNavigator();
-
-const HeaderNav = () => {
-    return (
-        <>
-        <Header
-            leftComponent={{ icon: 'menu', color: '#fff', iconStyle: { color: '#fff' }, onPress: () => openDrawer(), }}
-            centerComponent={{ text: 'MyTFB', style: { color: '#fff' } }}
-            rightComponent={{ icon: 'home', color: '#fff', onPress: () => navigate("StartUpScreen"), }}
-        />
-        <StartUpScreen/>
-        </>
-    );
-};
+const Stack = createStackNavigator();
 
 // Default Exported Component
 const StackNavigator = class StackNavigator extends React.Component {
@@ -55,24 +42,20 @@ const StackNavigator = class StackNavigator extends React.Component {
         return (
             <AuthProvider>
                 <NavigationContainer ref={navigationRef}>
-                    <Drawer.Navigator initialRouteName="Home" headerMode="none" logout={this.logout}>
+                    <Stack.Navigator initialRouteName="Home" headerMode="none" logout={this.logout}>
                         {this.props.userStateStore.isLoggedIn ? 
                         (
                             <>
-                            <Drawer.Screen name="Home" component={HomeScreen} />
-                            <Drawer.Screen name="Home" component={HomeScreen} />
-                            <Drawer.Screen name="Profile" component={HomeScreen} />
-                            <Drawer.Screen name="News" component={HomeScreen} />
+                            <Stack.Screen name="LoggedIn" component={LoggedInNavigator} />
                             </>
                         ) : 
                         (
                             <>
-                            <Drawer.Screen name='hi' component={HeaderNav} />
-                            <Drawer.Screen name="StartUpScreen" component={StartUpScreen} />
+                            <Stack.Screen name='LoggedOut' component={LoggedOutNavigator} />
                             </>
                         )
                         }
-                    </Drawer.Navigator>
+                    </Stack.Navigator>
                     
                 </NavigationContainer>
             </AuthProvider>
