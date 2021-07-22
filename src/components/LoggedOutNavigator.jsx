@@ -3,10 +3,11 @@ import {Header} from 'react-native-elements';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem} from '@react-navigation/drawer'
 import StartUpScreen from '../screens/StartUpScreen';
 import { inject, observer } from "mobx-react";
-import { navigationRef, openDrawer} from "../state/RootNavigation";
+import {openDrawer} from "../state/RootNavigation";
 import { Ionicons } from '@expo/vector-icons';
 import {Linking, StyleSheet} from 'react-native';
 import JoinMyTFBScreen  from '../screens/JoinMyTFBScreen';
+import Footer from './Footer';
 
 // Constants
 const CustomDrawerContentComponent = (props) => (
@@ -77,7 +78,7 @@ const LoggedOutNavigator = class LoggedOutNavigator extends React.Component{
                 leftComponent={{ icon: 'menu', color: '#fff', iconStyle: { color: '#fff' }, onPress: () => openDrawer(), }}
                 centerComponent={{ text: 'MyTFB', style: { color: '#fff' } }}
             />
-            <Drawer.Navigator initialRouteName="Login" headerMode="none"
+            <Drawer.Navigator initialRouteName="JoinMyTFB" headerMode="none"
                 drawerStyle={{
                     backgroundColor: "#fafafa",
                     alignItems: "center",
@@ -88,6 +89,8 @@ const LoggedOutNavigator = class LoggedOutNavigator extends React.Component{
                 <Drawer.Screen name="Login" component={StartUpScreen}/>
                 <Drawer.Screen name="JoinMyTFB" component={JoinMyTFBScreen}/>
             </Drawer.Navigator>
+            {/* Footer */}
+            <Footer> </Footer>
           </>
         );
     };

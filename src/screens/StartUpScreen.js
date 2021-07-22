@@ -7,7 +7,6 @@ import { inject, observer } from "mobx-react";
 // Constants
 const width_proportion = '80%';
 const height_proportion = '40%';
-const Tab = createBottomTabNavigator();
 const privacyPolicyURL = 'https://texasfarmbureau.org/privacy-policy/'
 
 // Default Exported Component

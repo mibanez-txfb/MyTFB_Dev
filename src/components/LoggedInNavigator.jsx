@@ -6,7 +6,7 @@ import { inject, observer } from "mobx-react";
 import {navigate, openDrawer} from "../state/RootNavigation";
 import { ImageBackground, StyleSheet, View, Linking, Text} from "react-native";
 import { Ionicons } from '@expo/vector-icons';
-import {Collapse,CollapseHeader, CollapseBody, AccordionList} from 'accordion-collapse-react-native';
+import Footer from './Footer';
 import AccordionListItem from './AccordionList';
 import {Spinner} from '../screens/Spinner';
 
@@ -261,7 +261,7 @@ const LoggedInNavigator = class LoggedInNavigator extends React.Component{
                 <Drawer.Screen name="OnSiteRegistration" component={Spinner} />
             </Drawer.Navigator>
             {/* Footer */}
-            <View><Text>footer</Text></View>
+            <Footer> </Footer>
           </>
         );
     };
