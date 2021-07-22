@@ -6,6 +6,7 @@ class UserStateStore{
     email = null;
     id = null;
     isLoggedIn = false;
+    userType = null;
 
     constructor(){
         makeObservable(this, {
@@ -29,6 +30,7 @@ class UserStateStore{
             this.setLoggedIn(true);
             this.setEmail(value);
             this.setID(10);
+            this.setUserType('Guest');
         }
 
     }
@@ -43,6 +45,10 @@ class UserStateStore{
 
     setLoggedIn(val){
         this.isLoggedIn = val;
+    }
+
+    setUserType(val){
+        this.userType = val;
     }
 
     login = async(email) => {

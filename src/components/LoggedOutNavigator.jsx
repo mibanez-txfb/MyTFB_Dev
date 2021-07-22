@@ -1,13 +1,64 @@
 import React from "react";
 import {Header} from 'react-native-elements';
-import { createDrawerNavigator } from '@react-navigation/drawer'
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem} from '@react-navigation/drawer'
 import StartUpScreen from '../screens/StartUpScreen';
 import { inject, observer } from "mobx-react";
-import {navigate, openDrawer, goToOutside} from "../state/RootNavigation";
+import { navigationRef, openDrawer} from "../state/RootNavigation";
 import { Ionicons } from '@expo/vector-icons';
-import {Linking, Text} from 'react-native';
+import {Linking, StyleSheet} from 'react-native';
+import JoinMyTFBScreen  from '../screens/JoinMyTFBScreen';
 
 // Constants
+const CustomDrawerContentComponent = (props) => (
+    
+    <DrawerContentScrollView> 
+        <DrawerItem    
+            label='Login'
+            onPress={() => props.navigation.navigate("Login")}
+            activeBackgroundColor='gray'
+            icon={ ({focused, size}) => <Ionicons
+                   name="md-home"
+                   size={size}/>
+            }
+        />
+        <DrawerItem    
+            label='TexasFarmBureau.org'
+            onPress={() => Linking.openURL('https://texasfarmbureau.org/')}
+            activeBackgroundColor='gray'
+            icon={ ({focused, size}) => <Ionicons
+                   name="earth-outline"
+                   size={size}/>
+            }
+        />
+        <DrawerItem    
+            label='TFB Insurance'
+            onPress={() => Linking.openURL('https://www.txfb-ins.com/')}
+            activeBackgroundColor='gray'
+            icon={ ({focused, size}) => <Ionicons
+                   name="reader-outline"
+                   size={size}/>
+            }
+        />
+        <DrawerItem    
+            label='Renew'
+            onPress={() => Linking.openURL('https://utilities.txfb.com/membership')}
+            activeBackgroundColor='gray'
+            icon={ ({focused, size}) => <Ionicons
+                   name="sync-outline"
+                   size={size}/>
+            }
+        />
+        <DrawerItem    
+            label='Join MyTFB'
+            onPress={() => props.navigation.navigate("JoinMyTFB")}
+            activeBackgroundColor='gray'
+            icon={ ({focused, size}) => <Ionicons
+                   name="exit-outline"
+                   size={size}/>
+            }
+        />
+    </DrawerContentScrollView>
+)
 const Drawer = createDrawerNavigator();
 
 
@@ -25,80 +76,25 @@ const LoggedOutNavigator = class LoggedOutNavigator extends React.Component{
             <Header
                 leftComponent={{ icon: 'menu', color: '#fff', iconStyle: { color: '#fff' }, onPress: () => openDrawer(), }}
                 centerComponent={{ text: 'MyTFB', style: { color: '#fff' } }}
-                rightComponent={{ icon: 'home', color: '#fff', onPress: () => navigate("Login"), }}
             />
             <Drawer.Navigator initialRouteName="Login" headerMode="none"
                 drawerStyle={{
                     backgroundColor: "#fafafa",
                     alignItems: "center",
+                    paddingTop: 15,
                   }}
+                  drawerContent={props => <CustomDrawerContentComponent {...props} />}
             >
-                <Drawer.Screen name="Login" component={StartUpScreen}
-                    options={{
-                        title: 'Home',
-                        drawerIcon: ({focused, size}) => (
-                           <Ionicons
-                              name="md-home"
-                              size={size}
-                           />
-                        ),
-                     }}
-                />
-                <Drawer.Screen name="TexasFarmBureau.org" component={StartUpScreen}
-                    options={{
-                        onPress: () => Linking.openURL('https://texasfarmbureau.org/'),
-                        title: 'TexasFarmBureau.org',
-                        drawerIcon: ({focused, size}) => (
-                           <Ionicons
-                              name="earth-outline"
-                              size={size}
-                           />
-                        ),
-                     }}
-                />
-                <Drawer.Screen name="TFB Insurance" component={StartUpScreen} 
-                    options={{
-                        title: 'TFB Insurance',
-                        drawerIcon: ({focused, size}) => (
-                           <Ionicons
-                              name="reader-outline"
-                              size={size}
-                              onPress={() => Linking.openURL('https://utilities.txfb.com/membership')}
-                           />
-                        ),
-                     }}
-                />
-                <Drawer.Screen name="Renew" component={StartUpScreen} 
-                    options={{
-                        title: 'Renew',
-                        drawerIcon: ({focused, size}) => (
-                           <Ionicons
-                              name="sync-outline"
-                              size={size}
-                              onPress={() => Linking.openURL('https://utilities.txfb.com/membership')}
-                           />
-                        ),
-                     }}
-                />
-                <Drawer.Screen name="Join TFB" component={StartUpScreen} 
-                    options={{
-                        title: 'Join TFB',
-                        drawerIcon: ({focused, size}) => (
-                           <Ionicons
-                              name="exit-outline"
-                              size={size}
-                           />
-                        ),
-                        title: () => (
-                            <Text onPress={() => goToOutside('https://utilities.txfb.com/membership')  }> Hi </Text>
-                          ),
-                     }}
-                />
+                <Drawer.Screen name="Login" component={StartUpScreen}/>
+                <Drawer.Screen name="JoinMyTFB" component={JoinMyTFBScreen}/>
             </Drawer.Navigator>
           </>
         );
     };
-
 }
+
+const styles = StyleSheet.create({
+
+});
 
 export default inject('userStateStore')(observer(LoggedOutNavigator));

@@ -3,7 +3,6 @@ import {Linking, KeyboardAvoidingView, TouchableWithoutFeedback, Text, View, Sty
 import SegmentedControlTab from 'react-native-segmented-control-tab';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { inject, observer } from "mobx-react";
-import { withUser } from "../state/userStore";
 
 // Constants
 const width_proportion = '80%';
