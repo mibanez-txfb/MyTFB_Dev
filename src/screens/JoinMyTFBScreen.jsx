@@ -4,32 +4,162 @@ import { inject, observer } from "mobx-react";
 import {HR} from '../components/Hr';
 import { Ionicons } from '@expo/vector-icons';
 import {Picker} from "@react-native-picker/picker";
+import {CheckBox} from 'react-native-elements';
+import { ValidateEmail } from '../assets/Validators';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 // Constants
 const width_proportion = '65%';
 const height_proportion = '40%';
+const scroll = React.createRef();
 
 // Default Exported Component
 const JoinMyTFBScreen = class JoinMyTFBScreen extends React.Component{
     constructor(props) {
         super(props);
 
+        this.onSubmit = this.onSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+
         this.state = {
-            firstName:'',
-            lastName:'',
+            FirstName:'',
+            LastName:'',
             DOB:'',
             Gender:'',
+            MailingAddress:'',
+            City: '',
             State:'',
+            Zip:'',
+            Email:'',
+            Phone:'',
+            PhoneType:'Mobile',
             County:'',
-
+            Referral:'',
+            FirstCheckBox:false,
+            SecondCheckBox:false,
+            FirstNameError:'',
+            LastNameError:'',
+            DOBError:'',
+            GenderError:'',
+            MailingAddressError:'',
+            CityError: '',
+            StateError:'',
+            ZipError:'',
+            EmailError:'',
+            PhoneError:'',
+            CountyError:'',
+            ReferralError:'',
+            FirstCheckBoxError:false,
+            SecondCheckBoxError:false,
+            showCalendar:false,
         }
+    }
+
+    handleDateChange = (event, selectedDate) => {
+        const currentDate = selectedDate || date;
+        setShow(Platform.OS === 'ios');
+        setDate(currentDate);
+    };
+
+    handleChange(e, param){
+        this.setState({
+            [param]:e.target.value,
+        })
+    }
+
+    onSubmit(){
+        let user = this.state, flag = true;
+        if(user.FirstName == ''){
+            this.setState({FirstNameError:'Required Field'});
+            flag=false;
+        }else
+            this.setState({FirstNameError:''});
+
+        if(user.LastName == ''){
+            this.setState({LastNameError:'Required Field'});
+            flag = false;
+        } else
+            this.setState({LastNameError:''});
+
+        if(user.DOB == ''){
+            this.setState({DOBError:'Required Field'});
+            flag = false;
+        } else
+            this.setState({DOBError:''});
+
+        if(user.Gender == ''){
+            this.setState({GenderError:'Required Field'});
+            flag = false;
+        } else
+            this.setState({GenderError:''});
+
+        if(user.MailingAddress == ''){
+            this.setState({MailingAddressError:'Required Field'});
+            flag = false;
+        } else
+            this.setState({MailingAddressError:''});
+
+        if(user.City == ''){
+            this.setState({CityError:'Required Field'});
+            flag = false;
+        } else  
+            this.setState({CityError:''});
+
+        if(user.State == ''){
+             this.setState({StateError:'Required Field'});
+             flag = false;
+        } else
+            this.setState({StateError:''});
+
+        if(user.Zip == ''){
+            this.setState({ZipError:'Required Field'});
+            flag = false;
+        } else  
+            this.setState({ZipError:''});
+
+        if(!ValidateEmail(user.email)){
+            this.setState({EmailError:'Required Field'});
+            flag = false;
+        } else
+            this.setState({EmailError:''});
+            
+        if(user.Phone == ''){
+           this.setState({PhoneError:'Required Field'});
+            flag = false;
+        } else 
+            this.setState({PhoneError:''});
+
+        if(user.County == ''){
+            this.setState({CountyError:'Required Field'});
+            flag = false;
+        } else
+            this.setState({CountyError:''});
+
+        if(!user.FirstCheckBox){
+            this.setState({FirstCheckBoxError:true});
+            flag = false;
+        } else
+            this.setState({FirstCheckBoxError:false});
+
+        if(!user.SecondCheckBox){
+            this.setState({SecondCheckBoxError:true});
+            flag = false;
+        } else  
+            this.setState({SecondCheckBoxError:false});
+
+        if(flag)
+            console.log('Submit Finally :D')
+        else
+            scroll.current.scrollTo(0)
+
+        console.log(this.state);
     }
 
     render(){
         return (
             
             <View style={styles.screen}>
-                <ScrollView style={styles.containerView} > 
+                <ScrollView ref={scroll} style={styles.containerView} > 
                     <KeyboardAvoidingView  behavior="padding">
                         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                             <View style={styles.loginScreenContainer}>
@@ -52,10 +182,27 @@ const JoinMyTFBScreen = class JoinMyTFBScreen extends React.Component{
                                             Contact Information 
                                         </Text>
                                     </View>
-                                    <TextInput placeholder="First Name" placeholderColor="#c0c0c0" style={styles.loginFormTextInput} onChangeText={this.handleOne} />
-                                    
-                                    <TextInput placeholder="Last name" placeholderColor="#c0c0c0" style={styles.loginFormTextInput} onChangeText={this.handleTwo} />
-                                    <TextInput placeholder="Data Of Birth" placeholderColor="#c0c0c0" style={styles.loginFormTextInput} onChangeText={this.handleTwo} />
+                                    <View>
+                                        <TextInput placeholder="First Name" placeholderColor="#c0c0c0" style={styles.loginFormTextInput} value={this.state.FirstName} onChange={(e) => this.handleChange(e, 'FirstName')} />
+                                        <Text style={styles.error}>{this.state.FirstNameError}</Text>
+                                    </View>
+                                    <View>
+                                        <TextInput placeholder="Last Name" placeholderColor="#c0c0c0" style={styles.loginFormTextInput} value={this.state.LastName} onChange={(e) => this.handleChange(e, 'LastName')} />
+                                        <Text style={styles.error}>{this.state.LastNameError}</Text>
+                                    </View>
+                                    <View>
+                                        <TextInput placeholder="Date Of Birth" placeholderColor="#c0c0c0" style={styles.loginFormTextInput} value={this.state.DOB} onFocus={()=>this.setState({showCalendar:true})} onBlur={()=>this.setState({showCalendar:false})} />
+                                        {this.state.showCalendar && console.log(this.state) && 
+                                            <DateTimePicker
+                                                testID="dateTimePicker"
+                                                value={this.state.DOB}
+                                                mode='date'
+                                                display="spinner"
+                                                onChange={this.handleDateChange}
+                                            />
+                                        }
+                                        <Text style={styles.error}>{this.state.DOBError}</Text>
+                                    </View>
                                     <View>
                                         <Text> Gender
                                             <Picker
@@ -68,9 +215,16 @@ const JoinMyTFBScreen = class JoinMyTFBScreen extends React.Component{
                                                 <Picker.Item label="Female" value="Female" />
                                             </Picker>
                                         </Text>
+                                        <Text style={styles.error}>{this.state.GenderError}</Text>
                                     </View>
-                                    <TextInput placeholder="Mailing Address" placeholderColor="#c0c0c0" style={styles.loginFormTextInput} onChangeText={this.handleTwo} />
-                                    <TextInput placeholder="City" placeholderColor="#c0c0c0" style={styles.loginFormTextInput} onChangeText={this.handleTwo} />
+                                    <View>
+                                        <TextInput placeholder="Mailing Address" placeholderColor="#c0c0c0" style={styles.loginFormTextInput} value={this.state.MailingAddress} onChange={(e) => this.handleChange(e, 'MailingAddress')} />
+                                        <Text style={styles.error}>{this.state.MailingAddressError}</Text>
+                                    </View>
+                                    <View>
+                                        <TextInput placeholder="City" placeholderColor="#c0c0c0" style={styles.loginFormTextInput} value={this.state.City} onChange={(e) => this.handleChange(e, 'City')} />
+                                        <Text style={styles.error}>{this.state.CityError}</Text>
+                                    </View>
                                     <View>
                                         <Text> State
                                             <Picker
@@ -132,10 +286,36 @@ const JoinMyTFBScreen = class JoinMyTFBScreen extends React.Component{
                                                 <Picker.Item label="WY" value="WY" />
                                             </Picker>
                                         </Text>
+                                        <Text style={styles.error}>{this.state.StateError}</Text>
                                     </View>
-                                    <TextInput placeholder="Zipcode" placeholderColor="#c0c0c0" style={styles.loginFormTextInput} onChangeText={this.handleTwo} />
-                                    <TextInput placeholder="Email" placeholderColor="#c0c0c0" style={styles.loginFormTextInput} onChangeText={this.handleTwo} />
-                                    <TextInput placeholder="Phone" placeholderColor="#c0c0c0" style={styles.loginFormTextInput} onChangeText={this.handleTwo} />
+                                    <View>
+                                        <TextInput placeholder="Zip Code" placeholderColor="#c0c0c0" style={styles.loginFormTextInput} value={this.state.Zip} onChange={(e) => this.handleChange(e, 'Zip')} />
+                                        <Text style={styles.error}>{this.state.ZipError}</Text>
+                                    </View>
+                                    <View>
+                                        <TextInput placeholder="Email" placeholderColor="#c0c0c0" style={styles.loginFormTextInput} value={this.state.Email} onChange={(e) => this.handleChange(e, 'Email')} />
+                                        <Text style={styles.error}>{this.state.EmailError}</Text>
+                                    </View>
+                                    <View>
+                                        <TextInput placeholder="Phone" placeholderColor="#c0c0c0" style={styles.loginFormTextInput} value={this.state.Phone} onChange={(e) => this.handleChange(e, 'Phone')} />
+                                        <Text style={styles.error}>{this.state.PhoneError}</Text>
+                                    </View>
+                                    <CheckBox
+                                        center
+                                        title='Mobile'
+                                        checkedIcon='dot-circle-o'
+                                        uncheckedIcon='circle-o'
+                                        checked={this.state.PhoneType == 'Mobile'}
+                                        onPress={() => this.setState({PhoneType: 'Mobile'})}
+                                    />
+                                    <CheckBox
+                                        center
+                                        title='Home'
+                                        checkedIcon='dot-circle-o'
+                                        uncheckedIcon='circle-o'
+                                        checked={this.state.PhoneType == 'Home'}
+                                        onPress={() => this.setState({PhoneType: 'Home'})}
+                                    />
                                     <View>
                                         <Text> TFB County you want to join
                                             <Picker
@@ -146,181 +326,9 @@ const JoinMyTFBScreen = class JoinMyTFBScreen extends React.Component{
                                                 <Picker.Item label="" value="" />
                                                 <Picker.Item label="Anderson" value="26847" />
                                                 <Picker.Item label="Angelina" value="26848" />
-                                                <Picker.Item label="Archer" value="26849" />
-                                                <Picker.Item label="ATACOSA" value="26850" />
-                                                <Picker.Item label="AUSTIN" value="26851" />
-                                                <Picker.Item label="BAILEY" value="26852" />
-                                                <Picker.Item label="BANDERA" value="26853" />
-                                                <Picker.Item label="BAYLOR" value="26854" />
-                                                <Picker.Item label="BEE" value="26855" />
-                                                <Picker.Item label="BELL" value="26856" />
-                                                <Picker.Item label="BEXAR" value="26857" />
-                                                <Picker.Item label="BLANCO" value="26858" />
-                                                <Picker.Item label="BOSQUE" value="26859" />
-                                                <Picker.Item label="BOWIE" value="26860" />
-                                                <Picker.Item label="BRAZORIA-GALVESTON" value="26861" />
-                                                <Picker.Item label="BRAZOS" value="26862" />
-                                                <Picker.Item label="BROWN" value="26863" />
-                                                <Picker.Item label="BURLESON" value="26864" />
-                                                <Picker.Item label="BURNET" value="26865" />
-                                                <Picker.Item label="CALDWELL" value="26866" />
-                                                <Picker.Item label="CALHOUN" value="26867" />
-                                                <Picker.Item label="CALLAHAN-SHACKLEFORD" value="26868" />
-                                                <Picker.Item label="CAMERON" value="26869" />
-                                                <Picker.Item label="CAMP" value="26870" />
-                                                <Picker.Item label="CARSON" value="26871" />
-                                                <Picker.Item label="CASS" value="26872" />
-                                                <Picker.Item label="CASTRO" value="26879" />
-                                                <Picker.Item label="CHAMBERS" value="26873" />
-                                                <Picker.Item label="CHEROKEE" value="26874" />
-                                                <Picker.Item label="CHILDRESS" value="26875" />
-                                                <Picker.Item label="CLAY" value="26876" />
-                                                <Picker.Item label="COCHRAN" value="26877" />
-                                                <Picker.Item label="COKE-STERLING" value="26878" />
-                                                <Picker.Item label="COLEMAN" value="26880" />
-                                                <Picker.Item label="COLLIN" value="18786" />
-                                                <Picker.Item label="COLLINGSWORTH" value="26881" />
-                                                <Picker.Item label="COLORADO" value="26882" />
-                                                <Picker.Item label="COMAL" value="26883" />
-                                                <Picker.Item label="COMANCHE" value="52907" />
-                                                <Picker.Item label="CONCHO" value="863525" />
-                                                <Picker.Item label="COOKE" value="26884" />
-                                                <Picker.Item label="CORYELL" value="26885" />
-                                                <Picker.Item label="COTTLE-KING" value="26886" />
-                                                <Picker.Item label="CROSBY" value="26887" />
-                                                <Picker.Item label="DALLAM-HARTLEY" value="2092636" />
-                                                <Picker.Item label="DALLAS" value="26889" />
-                                                <Picker.Item label="DAWSON" value="26890" />
-                                                <Picker.Item label="DEAF SMITH" value="26891" />
-                                                <Picker.Item label="DELTA" value="26892" />
-                                                <Picker.Item label="DENTON" value="26893" />
-                                                <Picker.Item label="DEWITT" value="26894" />
-                                                <Picker.Item label="DICKENS" value="26895" />
-                                                <Picker.Item label="DIMMIT" value="26896" />
-                                                <Picker.Item label="EASTLAND" value="26897" />
-                                                <Picker.Item label="EL PASO" value="26899" />
-                                                <Picker.Item label="ELLIS" value="26898" />
-                                                <Picker.Item label="ERATH" value="26900" />
-                                                <Picker.Item label="FALLS" value="26901" />
-                                                <Picker.Item label="FANNIN" value="26902" />
-                                                <Picker.Item label="FAYETTE" value="26903" />
-                                                <Picker.Item label="FISHER" value="26904" />
-                                                <Picker.Item label="FLOYD" value="26905" />
-                                                <Picker.Item label="FOARD" value="26906" />
-                                                <Picker.Item label="FORT BEND" value="26907" />
-                                                <Picker.Item label="FRANKLIN" value="1296125" />
-                                                <Picker.Item label="FREESTONE" value="26910" />
-                                                <Picker.Item label="FRIO" value="26911" />
-                                                <Picker.Item label="GAINES" value="26914" />
-                                                <Picker.Item label="GILLESPIE" value="26917" />
-                                                <Picker.Item label="GOLIAD" value="26918" />
-                                                <Picker.Item label="GONZALES" value="26919" />
-                                                <Picker.Item label="GRAY-ROBERTS" value="26920" />
-                                                <Picker.Item label="GRAYSON" value="26921" />
-                                                <Picker.Item label="GREGG" value="26922" />
-                                                <Picker.Item label="GRIMES" value="26923" />
-                                                <Picker.Item label="GUADALUPE" value="26924" />
-                                                <Picker.Item label="HALE" value="26925" />
-                                                <Picker.Item label="HALL-DONLEY" value="26926" />
-                                                <Picker.Item label="HAMILTON" value="26927" />
-                                                <Picker.Item label="HANSFORD" value="26928" />
-                                                <Picker.Item label="HARDEMAN" value="26929" />
-                                                <Picker.Item label="HARDIN" value="26930" />
-                                                <Picker.Item label="HARRIS" value="26931" />
-                                                <Picker.Item label="HARRISON" value="26932" />
-                                                <Picker.Item label="HASKELL" value="26934" />
-                                                <Picker.Item label="HAYS" value="26935" />
-                                                <Picker.Item label="HEMPHILL" value="26936" />
-                                                <Picker.Item label="HENDERSON" value="26937" />
-                                                <Picker.Item label="HIDALGO" value="26938" />
-                                                <Picker.Item label="HILL" value="26939" />
-                                                <Picker.Item label="HOCKLEY" value="26940" />
-                                                <Picker.Item label="HOOD-SOMERVELL" value="26941" />
-                                                <Picker.Item label="HOPKINS-RAINS" value="26942" />
-                                                <Picker.Item label="HOUSTON" value="26943" />
-                                                <Picker.Item label="HOWARD" value="26944" />
-                                                <Picker.Item label="HUDSPETH" value="26945" />
-                                                <Picker.Item label="HUNT" value="26946" />
-                                                <Picker.Item label="HUTCHINSON" value="26947" />
-                                                <Picker.Item label="JACK" value="26948" />
-                                                <Picker.Item label="JACKSON" value="26949" />
-                                                <Picker.Item label="JASPER" value="865033" />
-                                                <Picker.Item label="JEFFERSON" value="26950" />
-                                                <Picker.Item label="JIM WELLS" value="26951" />
-                                                <Picker.Item label="JOHNSON" value="26952" />
-                                                <Picker.Item label="JONES" value="26953" />
-                                                <Picker.Item label="KARNES" value="26954" />
-                                                <Picker.Item label="KAUFMAN" value="26955" />
-                                                <Picker.Item label="KENDALL" value="26956" />
-                                                <Picker.Item label="KERR" value="26957" />
-                                                <Picker.Item label="KIMBLE" value="26958" />
-                                                <Picker.Item label="KINNEY-VAL VERDE" value="1353271" />
-                                                <Picker.Item label="KLEBERG-KENEDY" value="26959" />
-                                                <Picker.Item label="KNOX" value="26960" />
-                                                <Picker.Item label="LAMAR" value="26961" />
-                                                <Picker.Item label="LAMB" value="26962" />
-                                                <Picker.Item label="LAMPASAS" value="26963" />
-                                                <Picker.Item label="LASALLE" value="26964" />
-                                                <Picker.Item label="LAVACA" value="26965" />
-                                                <Picker.Item label="LEE-BASTROP" value="26966" />
-                                                <Picker.Item label="LEON" value="26967" />
-                                                <Picker.Item label="LIBERTY" value="26968" />
-                                                <Picker.Item label="LIMESTONE" value="26969" />
-                                                <Picker.Item label="LIPSCOMB" value="26970" />
-                                                <Picker.Item label="LIVE OAK" value="26971" />
-                                                <Picker.Item label="LLANO" value="26972" />
-                                                <Picker.Item label="LUBBOCK" value="26973" />
-                                                <Picker.Item label="LYNN-GARZA" value="26974" />
-                                                <Picker.Item label="MADISON" value="26977" />
-                                                <Picker.Item label="MARION" value="1296571" />
-                                                <Picker.Item label="MARTIN" value="26978" />
-                                                <Picker.Item label="MASON" value="26979" />
-                                                <Picker.Item label="MATAGORDA" value="26980" />
-                                                <Picker.Item label="MAVERICK" value="26981" />
-                                                <Picker.Item label="MCCULLOCH" value="26975" />
-                                                <Picker.Item label="MCLENNAN" value="26976" />
-                                                <Picker.Item label="MEDINA" value="26982" />
-                                                <Picker.Item label="MENARD" value="26983" />
-                                                <Picker.Item label="MIDLAND" value="26984" />
-                                                <Picker.Item label="MILAM" value="26985" />
-                                                <Picker.Item label="MILLS" value="26986" />
-                                                <Picker.Item label="MITCHELL" value="26987" />
-                                                <Picker.Item label="MONTAGUE" value="26988" />
-                                                <Picker.Item label="MONTGOMERY" value="26989" />
-                                                <Picker.Item label="MOORE" value="26990" />
-                                                <Picker.Item label="MORRIS" value="26991" />
-                                                <Picker.Item label="MOTLEY" value="26992" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                <Picker.Item label="" value="" />
-                                                
-
                                             </Picker>
                                         </Text>
+                                        <Text style={styles.error}>{this.state.CountyError}</Text>
                                         <Text>
                                             Not Sure? Use our <Text style={{color:'blue'}} onPress={()=>{Linking.openURL('https://utilities.txfb.com/countylocator/')}}>county locator</Text>
                                         </Text>
@@ -346,19 +354,39 @@ const JoinMyTFBScreen = class JoinMyTFBScreen extends React.Component{
                                         />  
                                         Terms and Conditions
                                     </Text>
-                                    <Text> 
+                                    <Text > 
                                         I want to become a member of this county Farm Bureau, Texas Farm Bureau and the American Farm Bureau Federation, because I am interested in promoting the welfare and benefit of agriculture and the rural way of life.
                                     </Text>
-                                    <Text>
+                                    <Text >
                                         <Text style={{fontWeight:'bold'}}>Membership dues are not refundable and are not deductible as a charitable contribution for Federal Income Tax purposes.</Text> In accordance with current federal income tax law, a portion of your dues in the amount of $9.00
                                         has been estimated to be allocable to lobbying activities, and that portion is not deductible even if payment of your dues qualifies as a business expense.
                                     </Text>
                                 </View>
                                 <HR/>
+                                <View>
+                                    <CheckBox
+                                        center
+                                        title='I have read, understand, and agree that membership dues are not refundable.'
+                                        checkedIcon='dot-circle-o'
+                                        uncheckedIcon='circle-o'
+                                        textStyle={this.state.FirstCheckBoxError? styles.error : styles.normal}
+                                        checked={this.state.FirstCheckBox}
+                                        onPress={() => this.setState({FirstCheckBox: !this.state.FirstCheckBox})}
+                                    />
+                                    <CheckBox
+                                        center
+                                        title='I have read, understand, and agree to be bound by the Terms and Conditions listed above.'
+                                        checkedIcon='dot-circle-o'
+                                        uncheckedIcon='circle-o'
+                                        textStyle={this.state.SecondCheckBoxError? styles.error : styles.normal}
+                                        checked={this.state.SecondCheckBox}
+                                        onPress={() => this.setState({SecondCheckBox: !this.state.SecondCheckBox})}
+                                    />
+                                </View>
                                 <View style={styles.submitFormView}>
                                     <Button
                                         buttonStyle={styles.loginButton}
-                                        onPress={() => console.log('Hei')}
+                                        onPress={() => this.onSubmit()}
                                         title="Login"
                                     />
                                 </View>
@@ -433,6 +461,12 @@ const styles = StyleSheet.create({
     iconStyle:{
         padding: '1%',
     },
+    error:{
+        color:'red',
+    },
+    normal:{
+        color:'black',
+    }
 });
 
 export default inject('userStateStore')(observer(JoinMyTFBScreen));

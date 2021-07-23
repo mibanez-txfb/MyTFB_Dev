@@ -6,7 +6,6 @@ import { inject, observer } from "mobx-react";
 // Constants
 const width_proportion = '80%';
 const height_proportion = '40%';
-const Tab = createBottomTabNavigator();
 
 // Default Exported Component
 const HomeScreen = class HomeScreen extends React.Component{
@@ -17,7 +16,6 @@ const HomeScreen = class HomeScreen extends React.Component{
         this.state = {
             hi:'hi',
         }
-        console.log(this.props);
     }
 
     logout(){

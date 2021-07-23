@@ -42,7 +42,7 @@ const StackNavigator = class StackNavigator extends React.Component {
         return (
             <AuthProvider>
                 <NavigationContainer ref={navigationRef}>
-                    <Stack.Navigator initialRouteName="Home" headerMode="none" logout={this.logout}>
+                    <Stack.Navigator initialRouteName="Home" headerMode="none">
                         {this.props.userStateStore.isLoggedIn ? 
                         (
                             <>
